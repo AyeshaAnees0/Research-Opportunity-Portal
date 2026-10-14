@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>University Research Opportunity Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark portal-nav">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="#">Research Portal</a>
+      <span class="navbar-text text-white-50 small">FAST-NUCES · Peshawar Campus</span>
+    </div>
+  </nav>
+
+  <main class="container py-4 py-lg-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+      <div>
+        <p class="eyebrow mb-2">UNIVERSITY RESEARCH OPPORTUNITIES</p>
+        <h1 class="h2 mb-2">Find your next research experience</h1>
+        <p class="text-secondary mb-0">Browse opportunities posted by faculty and manage openings in one place.</p>
+      </div>
+      <button id="newOpportunityBtn" class="btn btn-primary px-4">+ Add opportunity</button>
+    </div>
+
+    <div id="alertArea" aria-live="polite"></div>
+
+    <section class="row g-3 mb-4" aria-label="Opportunity summary">
+      <div class="col-6 col-lg-4">
+        <div class="summary-card">
+          <div class="summary-label">Total opportunities</div>
+          <div id="totalCount" class="summary-value">—</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-4">
+        <div class="summary-card">
+          <div class="summary-label">Open opportunities</div>
+          <div id="openCount" class="summary-value">—</div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="summary-card">
+          <div class="summary-label">Closed opportunities</div>
+          <div id="closedCount" class="summary-value">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+        <div>
+          <h2 class="h5 mb-1">Research opportunities</h2>
+          <p class="text-secondary small mb-0">Information below is loaded from the backend API and MySQL database.</p>
+        </div>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+          <input id="searchInput" class="form-control" type="search" placeholder="Search opportunities..." aria-label="Search opportunities">
+          <select id="statusFilter" class="form-select" aria-label="Filter by status">
+            <option value="All">All statuses</option>
+            <option value="Open">Open only</option>
+            <option value="Closed">Closed only</option>
+          </select>
+        </div>
+      </div>
+      <div id="loadingState" class="text-secondary py-4 text-center">Loading opportunities…</div>
+      <div id="emptyState" class="empty-state d-none">
+        <div class="empty-icon">⌕</div>
+        <h3 class="h6">No opportunities found</h3>
+        <p class="text-secondary mb-0">Try another search or add a new research opportunity.</p>
+      </div>
+      <div id="opportunityList" class="row g-3"></div>
+    </section>
+  </main>
+
+  <div class="modal fade" id="opportunityModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <form id="opportunityForm" novalidate>
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow mb-1">OPPORTUNITY DETAILS</p>
+              <h2 id="modalTitle" class="modal-title fs-5">Add research opportunity</h2>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="formError" class="alert alert-danger d-none" role="alert"></div>
+            <input type="hidden" id="opportunityId">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="title" class="form-label">Research title <span class="required">*</span></label>
+                <input id="title" name="title" class="form-control" maxlength="200" required>
+                <div class="invalid-feedback">Enter a research title.</div>
+              </div>
+              <div class="col-12">
+                <label for="description" class="form-label">Research description <span class="required">*</span></label>
+                <textarea id="description" name="description" class="form-control" rows="3" required></textarea>
+                <div class="invalid-feedback">Enter a research description.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="research_area" class="form-label">Research area <span class="required">*</span></label>
+                <input id="research_area" name="research_area" class="form-control" placeholder="e.g. Artificial Intelligence" required>
+                <div class="invalid-feedback">Enter a research area.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="faculty_name" class="form-label">Faculty member's name <span class="required">*</span></label>
+                <input id="faculty_name" name="faculty_name" class="form-control" required>
+                <div class="invalid-feedback">Enter the faculty member's name.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="department" class="form-label">Department <span class="required">*</span></label>
+                <input id="department" name="department" class="form-control" placeholder="e.g. Computer Science" required>
+                <div class="invalid-feedback">Enter a department.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="required_skills" class="form-label">Required skills <span class="required">*</span></label>
+                <input id="required_skills" name="required_skills" class="form-control" placeholder="Python, statistics, research writing" required>
+                <div class="invalid-feedback">Enter required skills.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="positions" class="form-label">Available positions <span class="required">*</span></label>
+                <input id="positions" name="positions" type="number" min="1" step="1" class="form-control" required>
+                <div class="invalid-feedback">Enter a whole number greater than zero.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="application_deadline" class="form-label">Application deadline <span class="required">*</span></label>
+                <input id="application_deadline" name="application_deadline" type="date" class="form-control" required>
+                <div class="invalid-feedback">Choose a valid deadline.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" name="status" class="form-select">
+                  <option value="Open">Open</option>
+                  <option value="Closed">Closed</option>
+                </select>
+              </div>
+            </div>
+            <p class="small text-secondary mt-3 mb-0"><span class="required">*</span> Required fields. Changes are saved to the database through the REST API.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+            <button id="saveBtn" type="submit" class="btn btn-primary">Save opportunity</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow mb-1">FULL OPPORTUNITY</p>
+            <h2 id="detailsTitle" class="modal-title fs-5">Opportunity details</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="detailsContent" class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
+          <button id="editFromDetailsBtn" type="button" class="btn btn-primary">Edit opportunity</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="container py-4 text-center text-secondary small">
+    University Research Opportunity Portal · REST API + MySQL
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
