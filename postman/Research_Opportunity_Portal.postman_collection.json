@@ -1,0 +1,303 @@
+{
+  "info": {
+    "_postman_id": "5f7a2d7b-4e62-4f12-9b68-4a7d9e42b310",
+    "name": "Research Opportunity Portal API",
+    "description": "CRUD, validation, and 404 tests for the University Research Opportunity Portal. Run against localhost:3000.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "opportunityId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Create opportunity 1 (saves ID)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/opportunities",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"AI for Accessible Learning\",\n  \"description\": \"Explore machine-learning methods that help personalize digital learning resources.\",\n  \"research_area\": \"Artificial Intelligence\",\n  \"faculty_name\": \"Dr. Sara Ahmed\",\n  \"department\": \"Computer Science\",\n  \"required_skills\": \"Python, basic machine learning, data analysis\",\n  \"positions\": 2,\n  \"application_deadline\": \"2026-12-15\",\n  \"status\": \"Open\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201 Created\", () => pm.response.to.have.status(201));",
+              "const json = pm.response.json();",
+              "pm.test(\"Response includes created record\", () => pm.expect(json.data.id).to.be.a(\"number\"));",
+              "pm.collectionVariables.set(\"opportunityId\", json.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Create opportunity 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/opportunities",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Privacy in Virtual Try-On Systems\",\n  \"description\": \"Study user perceptions of privacy and trust in augmented reality shopping tools.\",\n  \"research_area\": \"Human-Computer Interaction\",\n  \"faculty_name\": \"Dr. Hamza Khan\",\n  \"department\": \"Computer Science\",\n  \"required_skills\": \"Survey design, JavaScript, data analysis\",\n  \"positions\": 3,\n  \"application_deadline\": \"2026-11-30\",\n  \"status\": \"Open\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201 Created\", () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Create opportunity 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/opportunities",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Campus Energy Data Analysis\",\n  \"description\": \"Analyze energy usage data and identify patterns that may support efficiency.\",\n  \"research_area\": \"Data Science\",\n  \"faculty_name\": \"Dr. Amina Noor\",\n  \"department\": \"Electrical Engineering\",\n  \"required_skills\": \"Python, statistics, visualization\",\n  \"positions\": 1,\n  \"application_deadline\": \"2026-12-05\",\n  \"status\": \"Open\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201 Created\", () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Retrieve all opportunities",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/opportunities"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Response data is an array\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Retrieve one opportunity by saved ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/opportunities/{{opportunityId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+              "pm.test(\"ID matches saved ID\", () => pm.expect(String(pm.response.json().data.id)).to.eql(pm.collectionVariables.get(\"opportunityId\")));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Update opportunity title",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/opportunities/{{opportunityId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"AI for Accessible and Inclusive Learning\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Title was updated\", () => pm.expect(pm.response.json().data.title).to.eql(\"AI for Accessible and Inclusive Learning\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Change status to Closed",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/opportunities/{{opportunityId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Closed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Opportunity is closed\", () => pm.expect(pm.response.json().data.status).to.eql(\"Closed\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Delete opportunity",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/opportunities/{{opportunityId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set(\"deletedOpportunityId\", pm.collectionVariables.get(\"opportunityId\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Request deleted opportunity (expected 404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/opportunities/{{deletedOpportunityId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 404 Not Found\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Invalid create request (expected 400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/opportunities",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"\",\n  \"description\": \"Missing required fields in this intentionally invalid request.\",\n  \"positions\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400 Bad Request\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Validation errors are returned\", () => pm.expect(pm.response.json().errors).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
