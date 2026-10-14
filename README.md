@@ -140,6 +140,13 @@ Import `postman/Research_Opportunity_Portal.postman_collection.json` into Postma
 
 The collection stores the created ID in a collection variable automatically. Run requests in order or manually set `opportunityId` to an existing ID.
 
+
+## GitHub Repository
+https://github.com/AyeshaAnees0/Research-Opportunity-Portal
+
+## Video Link
+https://drive.google.com/file/d/12oKgB15u68OxGcbS8UQun5ZvczT0iW5k/view?usp=sharing
+
 ## Project structure
 ```text
 research-opportunity-portal/
